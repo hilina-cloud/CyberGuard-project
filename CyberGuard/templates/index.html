@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CyberGuard | Threat Monitoring</title>
+<style>
+:root{--bg:#f4f7fb;--panel:#fff;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--navy:#152544;--blue:#2563eb;--red:#b91c1c;--amber:#b45309;--green:#047857}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,system-ui,Arial,sans-serif;color:var(--ink)}
+header{background:var(--navy);color:white;padding:22px max(24px,calc((100% - 1200px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px}.mark{height:42px;width:42px;border-radius:12px;background:#243c66;display:grid;place-items:center;font-size:22px}
+h1{font-size:21px;margin:0}header p{margin:4px 0 0;color:#bdcbe0;font-size:13px}.status{border:1px solid #466184;border-radius:20px;padding:7px 11px;font-size:12px;color:#dbeafe;white-space:nowrap}
+main{max-width:1200px;margin:28px auto;padding:0 22px}.intro{display:flex;justify-content:space-between;gap:18px;align-items:end;margin-bottom:20px}.intro h2{margin:0;font-size:25px}.intro p{margin:6px 0 0;color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.panel,.metric{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 14px #15254408}.metric{padding:18px}.metric-label{color:var(--muted);font-size:13px}.metric-value{font-size:29px;font-weight:750;margin:7px 0 3px}.metric-note{font-size:12px;color:var(--muted)}
+.panel{padding:20px;margin-top:18px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.panel h3{font-size:16px;margin:0}.sub{font-size:12px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.btn{display:inline-block;border:0;border-radius:8px;background:var(--blue);color:white;padding:10px 13px;font-size:13px;font-weight:650;text-decoration:none;cursor:pointer}.btn.secondary{background:#e8eef8;color:#1e3a66}.btn.dark{background:#27364f}.upload{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.upload input{max-width:260px;font-size:12px}
+.alert-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.alert{border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:14px}.alert.CRITICAL{border-left-color:var(--red)}.alert.HIGH{border-left-color:#ea580c}.alert.MEDIUM{border-left-color:var(--amber)}.alert h4{margin:9px 0 5px;font-size:14px}.alert p{font-size:13px;color:var(--muted);margin:0;line-height:1.5}.pill{font-size:10px;font-weight:800;letter-spacing:.05em;border-radius:20px;padding:5px 8px;background:#fef3c7;color:#92400e}.pill.CRITICAL{background:#fee2e2;color:#991b1b}.pill.HIGH{background:#ffedd5;color:#9a3412}.pill.LOW{background:#e2e8f0;color:#334155}.pill.INFO{background:#dcfce7;color:#166534}
+table{width:100%;border-collapse:collapse;font-size:12px}th{text-align:left;color:var(--muted);font-weight:650;background:#f8fafc}th,td{padding:11px 9px;border-bottom:1px solid var(--line);vertical-align:top}td.details{max-width:520px;overflow-wrap:anywhere;color:#475569}select{border:1px solid var(--line);background:white;border-radius:7px;padding:9px;color:var(--ink)}
+.filters{display:flex;gap:8px;flex-wrap:wrap}.filters button{margin:0}.flash{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;padding:11px 13px;border-radius:9px;margin:12px 0;font-size:13px}
+.bars{display:flex;flex-direction:column;gap:12px}.barrow{display:grid;grid-template-columns:120px 1fr 35px;gap:10px;align-items:center;font-size:12px}.bartrack{height:9px;border-radius:20px;background:#edf2f7;overflow:hidden}.barfill{height:100%;background:#3b82f6;border-radius:20px}
+footer{text-align:center;padding:26px;color:var(--muted);font-size:12px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.alert-list{grid-template-columns:1fr}.intro{align-items:start;flex-direction:column}}
+@media(max-width:520px){header{padding:18px}.status{display:none}.grid{grid-template-columns:1fr}.barrow{grid-template-columns:90px 1fr 25px}main{padding:0 14px}.panel{padding:14px}.table-wrap{overflow-x:auto}table{min-width:700px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="mark">⌁</div><div><h1>CyberGuard</h1><p>Linux Threat Monitoring & Log Analysis</p></div></div>
+  <div class="status">● LOCAL ANALYSIS ENGINE</div>
+</header>
+<main>
+  <div class="intro"><div><h2>Security overview</h2><p>Review authentication activity, investigate alerts, and export findings.</p></div><span class="sub">Source: {{ source_name }}</span></div>
+  {% with messages = get_flashed_messages() %}{% if messages %}{% for message in messages %}<div class="flash">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+  <section class="grid">
+    <div class="metric"><div class="metric-label">Log lines scanned</div><div class="metric-value">{{ result.total_lines }}</div><div class="metric-note">Input file lines</div></div>
+    <div class="metric"><div class="metric-label">Recognized events</div><div class="metric-value">{{ result.recognized }}</div><div class="metric-note">Parsed security-relevant entries</div></div>
+    <div class="metric"><div class="metric-label">Failed logins</div><div class="metric-value" style="color:#b91c1c">{{ result.failed }}</div><div class="metric-note">Authentication failures</div></div>
+    <div class="metric"><div class="metric-label">Unique source IPs</div><div class="metric-value">{{ result.unique_ips }}</div><div class="metric-note">Across recognized events</div></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div><h3>Log source</h3><div class="sub" style="margin-top:5px">Upload a text log up to 2 MB or reload the built-in sample.</div></div></div>
+    <div class="actions">
+      <form class="upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="logfile" accept=".log,.txt,text/plain" required>
+        <button class="btn" name="action" value="upload">Analyze log file</button>
+      </form>
+      <form method="post"><button class="btn secondary" name="action" value="sample">Load demo data</button></form>
+      <a class="btn dark" href="{{ url_for('export_csv') }}">Export alerts CSV</a>
+    </div>
+    <p class="sub" style="margin:14px 0 0">Privacy: files are analyzed locally by this app and kept in the current browser session. Avoid uploading sensitive logs to a shared computer.</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div><h3>Detection alerts</h3><div class="sub" style="margin-top:5px">{{ result.alerts|length }} alert(s) generated by the current rules</div></div></div>
+    {% if result.alerts %}
+    <div class="alert-list">
+      {% for alert in result.alerts %}
+      <article class="alert {{ alert.severity }}">
+        <span class="pill {{ alert.severity }}">{{ alert.severity }}</span>
+        <h4>{{ alert.title }}</h4><p>{{ alert.description }}</p>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}<p class="sub">No alerts matched the current detection rules.</p>{% endif %}
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div><h3>Failed logins by source</h3><div class="sub" style="margin-top:5px">Counts from recognized authentication failure events</div></div></div>
+    {% if result.failures_by_ip %}
+    <div class="bars">
+      {% set max_count = result.failures_by_ip.values()|list|max %}
+      {% for ip, count in result.failures_by_ip.items()|sort(attribute='1', reverse=true) %}
+      <div class="barrow"><span>{{ ip }}</span><div class="bartrack"><div class="barfill" style="width:{{ (count / max_count * 100)|round }}%"></div></div><strong>{{ count }}</strong></div>
+      {% endfor %}
+    </div>
+    {% else %}<p class="sub">No failed login events detected.</p>{% endif %}
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div><h3>Event explorer</h3><div class="sub" style="margin-top:5px">Filter parsed entries and inspect the original log message.</div></div>
+      <form class="filters" method="get">
+        <select name="severity" aria-label="Filter severity">
+          {% for option in ['ALL','CRITICAL','HIGH','MEDIUM','LOW','INFO'] %}<option value="{{ option }}" {% if severity_filter == option %}selected{% endif %}>{{ option }} severity</option>{% endfor %}
+        </select>
+        <select name="event" aria-label="Filter event">
+          {% for option in ['ALL','Failed login','Successful login','Invalid user','Privilege command'] %}<option value="{{ option }}" {% if event_filter == option %}selected{% endif %}>{{ option }}</option>{% endfor %}
+        </select>
+        <button class="btn" type="submit">Filter</button>
+      </form>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>Line</th><th>Severity</th><th>Event</th><th>Source IP</th><th>User</th><th>Original message</th></tr></thead><tbody>
+      {% for event in events %}
+      <tr><td>{{ event.line }}</td><td><span class="pill {{ event.severity }}">{{ event.severity }}</span></td><td>{{ event.event }}</td><td>{{ event.ip }}</td><td>{{ event.user }}</td><td class="details">{{ event.details }}</td></tr>
+      {% else %}<tr><td colspan="6">No events match these filters.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+</main>
+<footer>CyberGuard educational prototype · Rule-based findings require analyst review and are not proof of compromise.</footer>
+</body>
+</html>

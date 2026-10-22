@@ -1,0 +1,11 @@
+Oct 21 09:12:01 kali sshd[2101]: Failed password for admin from 203.0.113.44 port 42111 ssh2
+Oct 21 09:12:04 kali sshd[2102]: Failed password for admin from 203.0.113.44 port 42112 ssh2
+Oct 21 09:12:07 kali sshd[2103]: Failed password for root from 203.0.113.44 port 42113 ssh2
+Oct 21 09:12:10 kali sshd[2104]: Failed password for invalid user guest from 203.0.113.44 port 42114 ssh2
+Oct 21 09:12:14 kali sshd[2105]: Failed password for test from 198.51.100.27 port 42115 ssh2
+Oct 21 09:13:02 kali sshd[2106]: Accepted publickey for student from 192.0.2.18 port 42120 ssh2
+Oct 21 09:14:41 kali sudo: student : TTY=pts/0 ; PWD=/home/student ; USER=root ; COMMAND=/usr/bin/id
+Oct 21 09:15:10 kali sshd[2107]: Failed password for admin from 203.0.113.44 port 42116 ssh2
+Oct 21 09:15:12 kali sshd[2108]: Accepted password for admin from 203.0.113.44 port 42117 ssh2
+Oct 21 09:16:01 kali sshd[2109]: Invalid user oracle from 198.51.100.27
+This is a sample malformed/unrecognized line for parser demonstration.
